@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %} Plan to Progress - Register {% endblock %}
+
+{% block nav_bar %}
+	<div class="navbar-collapse collapse">
+        	<ul class="nav navbar-nav">
+                     <li>  <a href="/register"> Register</a> </li>
+
+                </ul>
+        </div>
+
+ {% endblock %}
+
+{% block page_content %}
+	<div class="col-md-4">
+		{{ wtf.quick_form(form)}}
+	</div>
+{% endblock %}
