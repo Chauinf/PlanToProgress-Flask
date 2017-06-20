@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %} Plan to Progress - ALL Files{% endblock %}
+
+
+{% block page_content %}
+	
+	<p> <h1>My Files</h1> </p>
+		
+
+	{% for file in my_list %}
+		<li>{{ file }} <a href="{{url_for('download', user_id = current_user.id,file_name = file)}}"> download </a> </li>
+
+	{% endfor %}
+
+	
+	<hr/>
+	<p>
+	  <h1>All Files</h1>
+	  </p>
+	  {% for key in all_dict %}
+	  	{% for value in all_dict[key] %}
+		<li>
+		<p>{{ value }}</p>
+		<p>User ID: {{ key }}</p>
+		<p><a href="{{url_for('download', user_id = key, file_name = value)}}">download </a>
+		</p>
+
+
+
+		</li>
+		{% endfor %}
+
+	  {% endfor %}
+{% endblock %}

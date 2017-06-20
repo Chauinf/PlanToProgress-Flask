@@ -1,8 +1,10 @@
 from flask.ext.wtf import Form
-from wtforms import StringField, PasswordField,  BooleanField, SubmitField
+from wtforms import StringField, PasswordField,  BooleanField, SubmitField, DateTimeField
 from wtforms.validators import Required, Length, Email, Regexp, EqualTo
 from wtforms import ValidationError
 from models import User
+from flask_wtf.file import FileField, FileRequired, FileAllowed
+from flask_uploads import UploadSet, configure_uploads, patch_request_class
 
 
 class RegisterForm(Form):
@@ -25,3 +27,19 @@ class LoginForm(Form):
 	password = PasswordField('Password', validators = [Required()])
 	remember_me = BooleanField('Keep me logged in')
 	submit = SubmitField('Log In')
+
+
+class ItemForm(Form):
+	title = StringField('Title', validators = [Required(), Length(1,32)])
+	detail = StringField('Detail',validators = [Required(), Length(1,128)])
+	tag = StringField('Tag',validators = [Required(), Length(1,32)])
+	before = StringField('Do it before', validators = [Required(), Length(1,64)])
+ 	submit = SubmitField('Publish')	
+
+class OperateForm(Form):
+	pass
+
+class UploadForm(Form):
+	file = FileField(validators=[FileRequired('Select a file !')])
+	submit = SubmitField('Upload')
+

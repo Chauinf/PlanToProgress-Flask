@@ -4,20 +4,26 @@
 
 {% block title %} Plan to Progress - Home {% endblock %}
 
-{% block nav_bar %} 
-        <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-		{% if current_user.is_authenticated  %}
-                     <li>  <a href="{{url_for('index')}}">{{ current_user.nickname }}</a> </li>
-		     <li>  <a href="{{url_for('logout')}}">Logout</a> </li>
-		{% else %}
-		     <li>  <a href="{{url_for('login')}}">Login</a> </li>
-		{% endif %}
-                </ul>
-        </div>
 
- {% endblock %}
 
 {% block page_content %}
-	
+	<p><h2> Plans  </h2>	</p>
+	<ul>
+	{% if lists  %}
+		{% for list in lists %}
+    			<li>
+				<p>Title:  {{ list.title }}</p>
+				<p>Detail:  {{ list.detail }}</p>
+				<p>Tag:  {{ list.tag }}</p>
+				<p>Target date:  {{ list.before }}</p>
+
+        			<p>{{ list.timestamp.strftime("%a, %d %b %Y %H:%M:%S") }}</p>
+				<hr />
+  			</li>
+    		{% endfor %}
+	{% else %}
+    		<p style="color:blue;">No plan yet ... </p>
+	{% endif %}
+		
+	</ul>	
 {% endblock %}

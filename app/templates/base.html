@@ -16,8 +16,22 @@
 			
 		</div>
 		
-		{% block nav_bar  %}
-		{% endblock %}
+		{% block nav_bar %} 
+		        <div class="navbar-collapse collapse">
+		                <ul class="nav navbar-nav">
+				{% if current_user.is_authenticated  %}
+		             <li>  <a href="{{url_for('index')}}">{{ current_user.nickname }}</a> </li>
+		             <li>  <a href="{{url_for('logout')}}">Logout</a> </li>
+				     <li>  <a href="{{url_for('publish')}}">New Plan</a> </li>
+				     <li>  <a href="{{url_for('upload')}}">Upload</a> </li>
+				     <li>  <a href="{{url_for('my_files')}}">Files</a> </li>
+				{% else %}
+				     <li>  <a href="{{url_for('login')}}">Login</a> </li>
+				{% endif %}
+		                </ul>
+		        </div>
+
+		 {% endblock %}
 	</div>
 
 
@@ -29,5 +43,7 @@
 	<div class="container">
 		{% block page_content %} {% endblock %}
 	</div>
+
+
 
 {% endblock %}

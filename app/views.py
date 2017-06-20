@@ -1,12 +1,18 @@
-from app import app, db
-from forms import  RegisterForm, LoginForm
-from models import User
-from flask.ext.login import login_user, logout_user, login_required
-from flask import render_template, redirect, request, url_for, flash
+from app import app, db, file_upload
+from forms import  RegisterForm, LoginForm, ItemForm, UploadForm
+from models import User,Item
+from flask.ext.login import login_user, logout_user, login_required, current_user
+from flask import render_template, redirect, request, url_for, flash, send_from_directory
+import datetime, os
 
 @app.route('/index')
 def index():
-	return render_template('index.html')
+	if current_user.is_authenticated:
+		user = User.query.filter_by( id = current_user.id).first()
+		lists = user.lists
+		return render_template('index.html', lists = lists)
+	else:
+		return render_template('index.html')
 
 @app.route('/register',methods = ['GET','POST'])
 def register():
@@ -36,3 +42,52 @@ def logout():
 	logout_user()
 	flash('You have been logged out')
 	return redirect(url_for('index'))
+
+
+@app.route('/publish', methods = ['GET','POST'])
+@login_required
+def publish():
+	form = ItemForm()
+	if form.validate_on_submit():
+		item = Item(title = form.title.data, detail = form.detail.data, tag = form.tag.data, before = form.before.data, timestamp = datetime.datetime.now(), user_id = current_user.id)
+ 		db.session.add(item)
+		db.session.commit()
+		return redirect((url_for('index')))
+	return render_template('publish.html', form = form)
+
+
+@app.route('/upload', methods = ['GET','POST'])
+@login_required
+def upload():
+	form = UploadForm()
+	if form.validate_on_submit():
+		file_name = file_upload.save(form.file.data, folder = str(current_user.id))
+		file_url = file_upload.url(file_name)
+		return redirect(url_for('index'))
+
+	else:
+		file_url = None
+
+	return render_template('upload.html', form = form, file_url = file_url)
+
+@app.route('/download/<user_id>/<file_name>', methods = ['GET', 'POST'])
+@login_required
+def  download(user_id,file_name):
+	return send_from_directory(app.config['UPLOADED_DEFAULT_DEST'] + user_id, file_name, as_attachment=True)
+	
+@app.route('/files', methods = ['GET','POST'])
+@login_required
+def my_files():
+	my_list = os.listdir(app.config['UPLOADED_DEFAULT_DEST'] + str(current_user.id))
+	all_path = os.listdir(app.config['UPLOADED_DEFAULT_DEST'])
+	all_dict = dict()
+	for  path in all_path:
+		if os.path.isdir(path):
+			pass
+		else:
+			all_dict[path] = os.listdir(app.config['UPLOADED_DEFAULT_DEST'] + path)
+	if my_list:
+		return render_template('files.html', my_list = my_list, all_dict = all_dict)
+		
+
+

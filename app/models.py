@@ -13,6 +13,7 @@ class User(UserMixin, db.Model):
 	nickname = db.Column(db.String(64), unique = True)
 	email = db.Column(db.String(64), unique = True)
 	password_hash = db.Column(db.String(128))
+	lists = db.relationship('Item', backref = 'user')
 
 	@property
 	def password(self):
@@ -27,3 +28,16 @@ class User(UserMixin, db.Model):
 
 	def __repr__(self):
 		return '== User %r==' % (self.nickname)
+
+class Item(db.Model):
+	__tablename__ = 'lists'
+        id = db.Column(db.Integer, primary_key = True)
+        title = db.Column(db.String(32))
+        detail = db.Column(db.String(128))
+        tag = db.Column(db.String(32))
+	timestamp = db.Column(db.DateTime)
+	before = db.Column(db.String(64))
+	user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+
+
