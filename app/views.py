@@ -63,7 +63,7 @@ def upload():
 	if form.validate_on_submit():
 		file_name = file_upload.save(form.file.data, folder = str(current_user.id))
 		file_url = file_upload.url(file_name)
-		return redirect(url_for('index'))
+		return redirect(url_for('my_files'))
 
 	else:
 		file_url = None
@@ -74,7 +74,12 @@ def upload():
 @login_required
 def  download(user_id,file_name):
 	return send_from_directory(app.config['UPLOADED_DEFAULT_DEST'] + user_id, file_name, as_attachment=True)
-	
+
+@app.route('/delete/<file_name>', methods = ['GET', 'POST'])
+@login_required
+def  delete(file_name):
+	return delete_file(app.config['UPLOADED_DEFAULT_DEST'] + str(current_user.id) + '/' + file_name)
+
 @app.route('/files', methods = ['GET','POST'])
 @login_required
 def my_files():
@@ -86,8 +91,11 @@ def my_files():
 			pass
 		else:
 			all_dict[path] = os.listdir(app.config['UPLOADED_DEFAULT_DEST'] + path)
-	if my_list:
-		return render_template('files.html', my_list = my_list, all_dict = all_dict)
-		
+
+	return render_template('files.html', my_list = my_list, all_dict = all_dict)
+	
+def delete_file(file_name):
+	os.remove(file_name)
+	return redirect(url_for('my_files'))
 
 
