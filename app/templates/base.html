@@ -40,8 +40,14 @@
 {% endblock%}
 
 {% block content %}
+
+	{% for msg in get_flashed_messages() %}
+		{{ msg }}
+	{% endfor %}
 	<div class="container">
+
 		{% block page_content %} {% endblock %}
+
 	</div>
 
 
