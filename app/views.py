@@ -83,7 +83,11 @@ def  delete(file_name):
 @app.route('/files', methods = ['GET','POST'])
 @login_required
 def my_files():
-	my_list = os.listdir(app.config['UPLOADED_DEFAULT_DEST'] + str(current_user.id))
+	if os.path.isdir(app.config['UPLOADED_DEFAULT_DEST'] + str(current_user.id)):
+		my_list = os.listdir(app.config['UPLOADED_DEFAULT_DEST'] + str(current_user.id))
+	else:
+		my_list = list()
+
 	all_path = os.listdir(app.config['UPLOADED_DEFAULT_DEST'])
 	all_dict = dict()
 	for  path in all_path:
